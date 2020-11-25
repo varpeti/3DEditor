@@ -182,7 +182,33 @@ const doKeyDown = (e) =>
         case "m": //move
             log("TODO");
         break;
+        case "a": //autoform
+            let size = (e_oneMeterIs.value*1)/8
+            let HX = e_HX.value*1
+            let HZ = e_HZ.value*1
+
+            for(i in selected)
+            {
+                dx = Math.abs(selected[i].top.x - selected[i].bottom.x);
+                dy = Math.abs(selected[i].top.y - selected[i].bottom.y);
+                dz = Math.abs(selected[i].top.z - selected[i].bottom.z);
+                
+                dmin=dx; p="x";
+                if (dmin>dy) {dmin=dy; p="y";}
+                if (dmin>dz) {dmin=dz; p="z";}
+
+                avg = (selected[i].top[p] + selected[i].bottom[p])/2
+
+                avg -= p=="x"?HX:p=="z"?HZ:0;
+                avg -= (avg + size) % (size*2);
+                avg += p=="x"?HX:p=="z"?HZ:0;
+            
+                selected[i].top[p] = avg+size
+                selected[i].bottom[p]= avg-size  
+            }
+        break;
     }
+    print();
 }
 
 const area = (rec) =>
@@ -336,7 +362,7 @@ const render = () =>
     if (selected.length===1)
     {
         const sobjs = getSize(selected[0]);
-        c.strokeText("last object size: "+sobjs.x+" "+sobjs.y+" "+sobjs.z,hcX+10,hcY+100);
+        c.strokeText("selected object size: "+sobjs.x+" "+sobjs.y+" "+sobjs.z,hcX+10,hcY+120);
     }
 
 }
@@ -344,9 +370,10 @@ const render = () =>
 setInterval(render,66); //15fps 
 
 const e_textarea = document.getElementById("textarea");
-const e_oneMeterIs = document.getElementById("oneMeterIs"); e_oneMeterIs.value = Math.floor((hcX+hcY)/(20*2));
+const e_oneMeterIs = document.getElementById("oneMeterIs"); e_oneMeterIs.value = Math.floor((hcX+hcY)/(32*2));
 const e_HX = document.getElementById("HX"); e_HX.value = Math.floor(hcX/2);
 const e_HZ = document.getElementById("HY"); e_HZ.value = Math.floor(hcY/2);
+
 const print = () =>
 {
     let oneMeterIs = e_oneMeterIs.value;
