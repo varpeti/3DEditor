@@ -183,7 +183,9 @@ const doKeyDown = (e) =>
             log("TODO");
         break;
         case "a": //autoform
-            let size = (e_oneMeterIs.value*1)/8
+            let oneMeterIs = (e_oneMeterIs.value*1)
+            let size = oneMeterIs/8
+
             let HX = e_HX.value*1
             let HZ = e_HZ.value*1
 
@@ -204,7 +206,10 @@ const doKeyDown = (e) =>
                 avg += p=="x"?HX:p=="z"?HZ:0;
             
                 selected[i].top[p] = avg+size
-                selected[i].bottom[p]= avg-size  
+                selected[i].bottom[p]= avg-size
+
+                if (selected[i].top.y    < oneMeterIs) boxes[i].top.y    = 0;
+                if (selected[i].bottom.y < oneMeterIs) boxes[i].bottom.y = 0;
             }
         break;
     }
@@ -385,16 +390,17 @@ const print = () =>
     {
         let pos1 = 
         {
-            x: (boxes[i].top.x   -HX) /oneMeterIs,
-            y:-(boxes[i].top.y   +0.5)/oneMeterIs,
-            z:-(boxes[i].top.z   -HZ) /oneMeterIs
+            x: (boxes[i].top.x   -HX)/oneMeterIs,
+            y:-(boxes[i].top.y      )/oneMeterIs,
+            z:-(boxes[i].top.z   -HZ)/oneMeterIs
         }
         let pos2 = 
         {
-            x: (boxes[i].bottom.x-HX) /oneMeterIs,
-            y:-(boxes[i].bottom.y+0.5)/oneMeterIs,
-            z:-(boxes[i].bottom.z-HZ) /oneMeterIs
+            x: (boxes[i].bottom.x-HX)/oneMeterIs,
+            y:-(boxes[i].bottom.y   )/oneMeterIs,
+            z:-(boxes[i].bottom.z-HZ)/oneMeterIs
         }
+
         str += "z1 x1 y1 z2 x2 y2\n"
                 .replace("x1",((pos1.x+pos2.x)/2).toFixed(3) )
                 .replace("y1",((pos1.y+pos2.y)/2).toFixed(3) )
